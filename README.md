@@ -9,6 +9,7 @@ Documentación y código del robot araña (hexápodo de 6 patas, 3 servos por pa
 ├── README.md
 ├── requirements.txt
 ├── calibracion_servos.example.json   # formato del archivo de calibración
+├── calibracion_servos.json           # TUS ángulos (lo crea el calibrador; no se sube a git)
 ├── spider_control/                   # el programa del robot
 │   ├── main.py                       # arranca: neutral -> caminar -> neutral
 │   ├── control.py                    # control interactivo por consola (w/a/s/d)
@@ -18,7 +19,8 @@ Documentación y código del robot araña (hexápodo de 6 patas, 3 servos por pa
 │   └── pca_manager.py                # acceso a las dos placas PCA9685
 ├── tools/
 │   ├── calibrar_servos.py            # calibración interactiva por consola
-│   └── ver_angulos.py                # muestra los ángulos que usa el robot (sin hardware)
+│   ├── ver_angulos.py                # muestra los ángulos que usa el robot (sin hardware)
+│   └── migrar_calibracion.py         # trae un JSON viejo, conservando solo las 18 claves actuales
 └── docs/
     ├── hardware.md                   # placas, direcciones I2C, cableado, canales
     └── calibracion.md                # cómo calibrar y probar las patas
@@ -32,8 +34,8 @@ main.py
   ├─ leg.Leg                ──> config (LEG_CHANNELS, SERVO_CALIBRATION)
   └─ gaits                  ──> config (SERVO_CALIBRATION)
 
-config.py ──(lee al arrancar)──> ~/calibracion_servos.json
-tools/calibrar_servos.py ──(escribe)──> ~/calibracion_servos.json
+config.py ──(lee al arrancar)──> calibracion_servos.json (raíz del proyecto)
+tools/calibrar_servos.py ──(escribe)──> calibracion_servos.json (raíz del proyecto)
 ```
 
 El robot **no** guarda los ángulos de reposo en el código: los lee del JSON que genera la herramienta de calibración. Si recalibras, basta con volver a ejecutar `main.py`.
@@ -57,7 +59,7 @@ sudo i2cdetect -y 1               # deben aparecer 40, 42 y 70
 ```bash
 source ~/venv/bin/activate
 
-# 1. Calibrar (guarda ~/calibracion_servos.json)
+# 1. Calibrar (guarda calibracion_servos.json en la raíz del proyecto)
 python3 tools/calibrar_servos.py
 
 # 2. Ver los ángulos que usará el robot (no mueve nada)

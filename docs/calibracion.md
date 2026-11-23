@@ -2,7 +2,7 @@
 
 ## Qué es el neutral
 
-Es el ángulo de cada servo en la **postura de pie**. Se guarda en `~/calibracion_servos.json` con claves `"h:<canal>"` (placa 1, 0x42, patas izquierdas) y `"h2:<canal físico>"` (placa 2, 0x40, patas derechas).
+Es el ángulo de cada servo en la **postura de pie**. Se guarda en `calibracion_servos.json`, en la raíz del proyecto (junto a `spider_control/` y `tools/`), con claves `"h:<canal>"` (placa 1, 0x42, patas izquierdas) y `"h2:<canal físico>"` (placa 2, 0x40, patas derechas).
 
 El JSON guarda el ángulo **físico** que recibe el servo. En las patas derechas el código lo invierte (`180 - ángulo`), así que `config.py` convierte solo; no hay que hacerlo a mano.
 

@@ -1,7 +1,8 @@
 """Configuracion del hexapodo: placas I2C, canales por pata y calibracion.
 
 Los angulos de reposo (neutral) NO se escriben aqui: se leen de
-~/calibracion_servos.json, el archivo que genera tools/calibrar_servos.py.
+calibracion_servos.json, en la carpeta raiz del proyecto (la que contiene
+spider_control/ y tools/), el archivo que genera tools/calibrar_servos.py.
 Se puede cambiar la ruta con la variable de entorno SPIDER_CALIBRATION.
 """
 import json
@@ -44,8 +45,9 @@ LEG_CHANNELS = {
     "R3": {"tibia": 22, "femur": 23, "coxa": 24},
 }
 
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CALIBRATION_FILE = os.environ.get(
-    "SPIDER_CALIBRATION", os.path.expanduser("~/calibracion_servos.json")
+    "SPIDER_CALIBRATION", os.path.join(PROJECT_ROOT, "calibracion_servos.json")
 )
 
 

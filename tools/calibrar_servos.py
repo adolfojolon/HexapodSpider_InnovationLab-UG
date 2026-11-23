@@ -1,7 +1,8 @@
 """Calibracion interactiva de servos por consola (sin entorno grafico).
 
 Mueve un servo a la vez y guarda el angulo de reposo en
-~/calibracion_servos.json, el archivo que lee spider_control/config.py.
+calibracion_servos.json, en la raiz del proyecto (junto a spider_control/ y
+tools/), el archivo que lee spider_control/config.py.
 
 Uso:
     python3 calibrar_servos.py            # placa 1 (0x42) y placa 2 (0x40)
@@ -21,8 +22,9 @@ import board
 import busio
 from adafruit_pca9685 import PCA9685
 
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ARCHIVO = os.environ.get(
-    "SPIDER_CALIBRATION", os.path.expanduser("~/calibracion_servos.json")
+    "SPIDER_CALIBRATION", os.path.join(RAIZ, "calibracion_servos.json")
 )
 HAT_ADDR = 0x42
 

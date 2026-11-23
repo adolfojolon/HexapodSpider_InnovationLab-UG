@@ -31,7 +31,7 @@ Cada pata usa 3 canales seguidos, en el orden **tibia, fémur, coxa**. Cada plac
 | R2 | 2 (0x40) | 3 | 4 | 5 |
 | R3 | 2 (0x40) | 6 | 7 | 8 |
 
-En el código y en el calibrador, los canales de la placa 2 se numeran como **lógicos 16-24** (físico + 16). En `~/calibracion_servos.json` se guardan como `h:<canal>` (placa 1) y `h2:<canal físico>` (placa 2).
+En el código y en el calibrador, los canales de la placa 2 se numeran como **lógicos 16-24** (físico + 16). En `calibracion_servos.json` (raíz del proyecto) se guardan como `h:<canal>` (placa 1) y `h2:<canal físico>` (placa 2).
 
 > Las patas R tienen `invert: True` en la calibración (el espejo mecánico del lado derecho lo resuelve el código).
 
