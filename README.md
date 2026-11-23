@@ -1,6 +1,6 @@
 # HexapodSpider – Innovation Lab UG
 
-Documentación y código del robot araña (hexápodo de 6 patas, 3 servos por pata) controlado desde una Raspberry Pi con una placa PCA9685.
+Documentación y código del robot araña (hexápodo de 6 patas, 3 servos por pata) controlado desde una Raspberry Pi con dos placas PCA9685.
 
 ## Estructura
 
@@ -11,12 +11,14 @@ Documentación y código del robot araña (hexápodo de 6 patas, 3 servos por pa
 ├── calibracion_servos.example.json   # formato del archivo de calibración
 ├── spider_control/                   # el programa del robot
 │   ├── main.py                       # arranca: neutral -> caminar -> neutral
+│   ├── control.py                    # control interactivo por consola (w/a/s/d)
 │   ├── gaits.py                      # marcha trípode, giros, posturas
 │   ├── leg.py                        # clase Leg (coxa, fémur, tibia)
 │   ├── config.py                     # canales, direcciones I2C, calibración
-│   └── pca_manager.py                # acceso a la(s) placa(s) PCA9685
+│   └── pca_manager.py                # acceso a las dos placas PCA9685
 ├── tools/
-│   └── calibrar_servos.py            # calibración interactiva por consola
+│   ├── calibrar_servos.py            # calibración interactiva por consola
+│   └── ver_angulos.py                # muestra los ángulos que usa el robot (sin hardware)
 └── docs/
     ├── hardware.md                   # placas, direcciones I2C, cableado, canales
     └── calibracion.md                # cómo calibrar y probar las patas
@@ -47,7 +49,7 @@ cd HexapodSpider_InnovationLab-UG
 python3 -m venv ~/venv
 source ~/venv/bin/activate        # repetir en cada terminal nueva
 pip install -r requirements.txt
-sudo i2cdetect -y 1               # debe aparecer 42
+sudo i2cdetect -y 1               # deben aparecer 40, 42 y 70
 ```
 
 ## Uso
@@ -58,16 +60,27 @@ source ~/venv/bin/activate
 # 1. Calibrar (guarda ~/calibracion_servos.json)
 python3 tools/calibrar_servos.py
 
-# 2. Probar el robot (con el cuerpo en el aire la primera vez)
+# 2. Ver los ángulos que usará el robot (no mueve nada)
+python3 tools/ver_angulos.py
+
+# 3. Probar el robot (con el cuerpo en el aire la primera vez)
 cd spider_control
-python3 main.py
+python3 main.py       # guion fijo: neutral, 2 pasos, neutral
+python3 control.py    # interactivo: w/s adelante-atrás, a/d giro, n neutral, p ángulos, q salir
 ```
 
-## Estado actual y pendientes
+## Hardware
 
-- **Una sola placa PCA9685 (0x42, 16 canales)**, pero el mapeo usa 18 canales (0-17). Los canales **16 y 17** (fémur y coxa de **R3**) no existen sin una **segunda placa**. Mientras no esté, el programa los ignora con un aviso: **no uses la marcha así**, R3 quedaría con dos servos sin control. Cuando tengas la placa, pon su dirección en `PCA_ADDR_2` (`config.py`) y calibra con `python3 tools/calibrar_servos.py 0x40`.
-- Faltan calibrar los canales 13 a 17 (en el JSON de referencia solo había datos hasta el 12).
+Dos placas PCA9685 en el mismo bus I2C:
+
+- **Placa 1, `0x42`**: patas izquierdas L1-L3 (canales 0-8).
+- **Placa 2, `0x40`**: patas derechas R1-R3 (canales físicos 0-8, lógicos 16-24).
+
+## Estado y pendientes
+
+- Calibrar los 18 servos con `python3 tools/calibrar_servos.py`. Las patas derechas hay que calibrarlas de nuevo si antes estaban en otros canales.
 - Varios neutrales calibrados quedaron en los extremos (0 o 180). La coxa solo se puede mover hacia un lado y el servo puede forzarse contra su tope. Lo correcto es reposicionar el brazo (horn) de esos servos para que la pose de pie quede cerca de 90 y recalibrar.
-- La alimentación de los servos debe ser una fuente externa de 5 V con varios amperios, con GND común con la Pi.
+- La alimentación de los servos debe ser una fuente externa de 5 V con varios amperios, con GND común con la Pi. Con 18 servos, 3 A o más como referencia.
+- Suposición a confirmar con el robot: las patas L están en la placa 1 y las R en la 2, con `invert` solo en las R. Si una pata sube o avanza al revés, es lo primero que hay que revisar.
 
 Ver `docs/hardware.md` y `docs/calibracion.md` para el detalle.

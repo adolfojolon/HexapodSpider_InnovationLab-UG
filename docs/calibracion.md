@@ -2,14 +2,14 @@
 
 ## Qué es el neutral
 
-Es el ángulo de cada servo en la **postura de pie**. Se guarda en `~/calibracion_servos.json` con claves `"h:<canal>"` (placa 0x42) y `"h2:<canal>"` (2.ª placa).
+Es el ángulo de cada servo en la **postura de pie**. Se guarda en `~/calibracion_servos.json` con claves `"h:<canal>"` (placa 1, 0x42, patas izquierdas) y `"h2:<canal físico>"` (placa 2, 0x40, patas derechas).
 
 El JSON guarda el ángulo **físico** que recibe el servo. En las patas derechas el código lo invierte (`180 - ángulo`), así que `config.py` convierte solo; no hay que hacerlo a mano.
 
 ## Procedimiento
 
 1. Con el brazo (horn) **sin atornillar**, manda el servo a 90° (el centro). Atornilla el brazo en la posición que quieras como neutral.
-2. Corre `python3 tools/calibrar_servos.py` y elige el canal. Escribe un ángulo (0-180) para moverlo en vivo y `g` para guardarlo. Comandos: `o` apaga el canal, `s` salta, `q` sale.
+2. Corre `python3 tools/calibrar_servos.py` y elige el canal: **0-8** para las patas izquierdas y **16-24** para las derechas (el programa muestra a qué pata y articulación corresponde cada uno). Escribe un ángulo (0-180) para moverlo en vivo y `g` para guardarlo. Comandos: `o` apaga el canal, `s` salta, `q` sale.
 3. Calibra con el robot **en el aire**; luego bájalo a una superficie plana.
 4. Marca con plumón la posición del horn respecto al servo para poder recolocarlo igual.
 
@@ -43,4 +43,3 @@ El movimiento está sincronizado: todas las articulaciones de un movimiento sale
 - **Una pata sube al revés:** suele ser un `invert` mal puesto en esa pata o un servo montado en espejo.
 - **Una pata cede lento al apagar:** los servos no tienen freno; sin señal PWM el peso del cuerpo los vence. Es normal. Baja el cuerpo a una postura estable antes de apagar.
 - `release_all()` quita la señal de todos los canales al terminar `main.py`: las patas quedan sin fuerza.
-- Faltan calibrar los canales 13 a 17.

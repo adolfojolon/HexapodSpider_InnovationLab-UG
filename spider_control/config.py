@@ -8,10 +8,9 @@ import json
 import os
 
 # --- Placas PCA9685 ---
-PCA_ADDR_1 = 0x42   # HAT de servos (jumper A1 soldado): canales 0-15
-PCA_ADDR_2 = None   # segunda placa para los canales 16-17 (R3 femur y coxa).
-                    # Ponla, por ejemplo, en 0x40 cuando la tengas conectada.
-                    # Evita 0x70 y 0x77: los usa el Rainbow HAT.
+PCA_ADDR_1 = 0x42   # placa 1 (jumper A1 soldado): patas IZQUIERDAS L1-L3
+PCA_ADDR_2 = 0x40   # placa 2 (sin jumpers):          patas DERECHAS  R1-R3
+                    # Evita 0x70 (all-call del PCA9685).
 
 PWM_FREQ = 50
 
@@ -24,21 +23,25 @@ LEG_NAMES = ["L1", "L2", "L3", "R1", "R2", "R3"]
 
 
 def resolve_channel(logical_channel):
-    """Canal logico (0-31) -> (placa, canal fisico 0-15)."""
+    """Canal logico -> (placa, canal fisico 0-15).
+
+    Logico 0-15 = placa 1 (0x42). Logico 16-31 = placa 2 (0x40), o sea el
+    canal fisico 0 de la placa 2 es el logico 16."""
     if logical_channel < 16:
         return ("A", logical_channel)
     return ("B", logical_channel - 16)
 
 
 # Orden fisico por pata: tibia, femur, coxa.
-# Los canales 16 y 17 requieren la segunda placa (PCA_ADDR_2).
+# Placa 1 (0x42), canales 0-8:  patas izquierdas.
+# Placa 2 (0x40), canales 0-8:  patas derechas (logicos 16-24).
 LEG_CHANNELS = {
     "L1": {"tibia": 0,  "femur": 1,  "coxa": 2},
     "L2": {"tibia": 3,  "femur": 4,  "coxa": 5},
     "L3": {"tibia": 6,  "femur": 7,  "coxa": 8},
-    "R1": {"tibia": 9,  "femur": 10, "coxa": 11},
-    "R2": {"tibia": 12, "femur": 13, "coxa": 14},
-    "R3": {"tibia": 15, "femur": 16, "coxa": 17},
+    "R1": {"tibia": 16, "femur": 17, "coxa": 18},
+    "R2": {"tibia": 19, "femur": 20, "coxa": 21},
+    "R3": {"tibia": 22, "femur": 23, "coxa": 24},
 }
 
 CALIBRATION_FILE = os.environ.get(
